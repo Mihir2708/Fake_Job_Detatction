@@ -2,19 +2,39 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { validateAnalyzeJobInput } from '../src/utils/validation.js';
 
-test('validateAnalyzeJobInput - valid payload with only required jobDescription', () => {
+test('validateAnalyzeJobInput - valid payload with required fields', () => {
   const input = {
+    jobTitle: 'Fullstack Developer',
+    companyName: 'KBA Systems',
     jobDescription: 'We are seeking a Full Stack Software Engineer to build scalable microservices and web interfaces using modern frameworks.',
   };
 
   const result = validateAnalyzeJobInput(input);
   assert.equal(result.isValid, true);
   assert.equal(result.error, undefined);
+  assert.equal(result.sanitizedData.jobTitle, 'Fullstack Developer');
+  assert.equal(result.sanitizedData.companyName, 'KBA Systems');
   assert.equal(result.sanitizedData.jobDescription, input.jobDescription);
-  assert.equal(result.sanitizedData.jobTitle, '');
-  assert.equal(result.sanitizedData.companyName, '');
   assert.equal(result.sanitizedData.requirements, '');
   assert.equal(result.sanitizedData.location, '');
+});
+
+test('validateAnalyzeJobInput - rejects missing jobTitle', () => {
+  const result = validateAnalyzeJobInput({
+    companyName: 'KBA Systems',
+    jobDescription: 'We are seeking a Full Stack Software Engineer to build scalable microservices and web interfaces.',
+  });
+  assert.equal(result.isValid, false);
+  assert.match(result.error, /Job Title is required/i);
+});
+
+test('validateAnalyzeJobInput - rejects missing companyName', () => {
+  const result = validateAnalyzeJobInput({
+    jobTitle: 'Fullstack Developer',
+    jobDescription: 'We are seeking a Full Stack Software Engineer to build scalable microservices and web interfaces.',
+  });
+  assert.equal(result.isValid, false);
+  assert.match(result.error, /Company Name is required/i);
 });
 
 test('validateAnalyzeJobInput - valid payload with all fields provided and trimmed', () => {
@@ -44,26 +64,26 @@ test('validateAnalyzeJobInput - rejects non-object or null request body', () => 
 });
 
 test('validateAnalyzeJobInput - rejects missing or undefined jobDescription', () => {
-  const result = validateAnalyzeJobInput({ jobTitle: 'Developer' });
+  const result = validateAnalyzeJobInput({ jobTitle: 'Developer', companyName: 'Acme Corp' });
   assert.equal(result.isValid, false);
-  assert.match(result.error, /jobDescription is required/i);
+  assert.match(result.error, /job\s*description is required/i);
 });
 
 test('validateAnalyzeJobInput - rejects non-string jobDescription', () => {
-  const result = validateAnalyzeJobInput({ jobDescription: 123456789 });
+  const result = validateAnalyzeJobInput({ jobTitle: 'Developer', companyName: 'Acme Corp', jobDescription: 123456789 });
   assert.equal(result.isValid, false);
   assert.match(result.error, /must be a string/i);
 });
 
 test('validateAnalyzeJobInput - rejects jobDescription that is too short', () => {
-  const result = validateAnalyzeJobInput({ jobDescription: 'Short job desc' });
+  const result = validateAnalyzeJobInput({ jobTitle: 'Developer', companyName: 'Acme Corp', jobDescription: 'Short job desc' });
   assert.equal(result.isValid, false);
   assert.match(result.error, /minimum 30 characters/i);
 });
 
 test('validateAnalyzeJobInput - rejects jobDescription exceeding maximum length', () => {
   const longDesc = 'A'.repeat(15001);
-  const result = validateAnalyzeJobInput({ jobDescription: longDesc });
+  const result = validateAnalyzeJobInput({ jobTitle: 'Developer', companyName: 'Acme Corp', jobDescription: longDesc });
   assert.equal(result.isValid, false);
   assert.match(result.error, /exceeds the maximum allowed length/i);
 });
@@ -71,10 +91,10 @@ test('validateAnalyzeJobInput - rejects jobDescription exceeding maximum length'
 test('validateAnalyzeJobInput - rejects non-string optional fields', () => {
   const baseDesc = 'Valid description that has more than thirty characters of meaningful content.';
 
-  assert.equal(validateAnalyzeJobInput({ jobDescription: baseDesc, jobTitle: 999 }).isValid, false);
-  assert.equal(validateAnalyzeJobInput({ jobDescription: baseDesc, companyName: { name: 'Acme' } }).isValid, false);
-  assert.equal(validateAnalyzeJobInput({ jobDescription: baseDesc, requirements: ['Node'] }).isValid, false);
-  assert.equal(validateAnalyzeJobInput({ jobDescription: baseDesc, location: true }).isValid, false);
+  assert.equal(validateAnalyzeJobInput({ jobDescription: baseDesc, jobTitle: 999, companyName: 'Acme' }).isValid, false);
+  assert.equal(validateAnalyzeJobInput({ jobDescription: baseDesc, jobTitle: 'Developer', companyName: { name: 'Acme' } }).isValid, false);
+  assert.equal(validateAnalyzeJobInput({ jobDescription: baseDesc, jobTitle: 'Developer', companyName: 'Acme', requirements: ['Node'] }).isValid, false);
+  assert.equal(validateAnalyzeJobInput({ jobDescription: baseDesc, jobTitle: 'Developer', companyName: 'Acme', location: true }).isValid, false);
 });
 
 test('validateAnalyzeJobInput - rejects optional fields exceeding maximum length', () => {

@@ -14,6 +14,8 @@ export const getHealth = (req, res) => {
     environment: config.nodeEnv,
     database: getDbStatus(),
     geminiConfigured: Boolean(config.geminiApiKey),
+    tavilyConfigured: Boolean(config.tavilyApiKey),
+    webSearchProvider: config.tavilyApiKey ? 'tavily' : (config.googleSearchApiKey ? 'google' : 'none'),
     timestamp: new Date().toISOString(),
   };
 

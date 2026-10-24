@@ -1,5 +1,6 @@
 /**
- * Utility to parse and strictly validate Gemini AI job analysis responses
+ * Utility to parse and strictly validate Gemini AI job analysis responses.
+ * Updated to support new redFlags and greenFlags fields.
  */
 
 export const ALLOWED_PREDICTIONS = ['LIKELY_REAL', 'SUSPICIOUS', 'INSUFFICIENT_INFORMATION'];
@@ -31,12 +32,15 @@ export const extractJsonFromText = (rawText) => {
 
 /**
  * Parses and validates the structured response from Gemini against the required schema.
+ * Now supports optional redFlags and greenFlags arrays.
  *
  * @param {string} rawResponseText - Raw text response from Gemini API
  * @returns {{
  *   prediction: 'LIKELY_REAL' | 'SUSPICIOUS' | 'INSUFFICIENT_INFORMATION',
  *   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'UNKNOWN',
  *   reasons: string[],
+ *   redFlags: string[],
+ *   greenFlags: string[],
  *   recommendation: string,
  *   limitations: string,
  *   confidence: null
@@ -78,12 +82,22 @@ export const parseAndValidateGeminiResponse = (rawResponseText) => {
     throw new Error('AI response reasons must contain valid text strings.');
   }
 
-  // 4. Validate recommendation
+  // 4. Parse optional redFlags (graceful fallback)
+  const validatedRedFlags = Array.isArray(parsed.redFlags)
+    ? parsed.redFlags.filter((f) => typeof f === 'string' && f.trim()).map((f) => f.trim())
+    : [];
+
+  // 5. Parse optional greenFlags (graceful fallback)
+  const validatedGreenFlags = Array.isArray(parsed.greenFlags)
+    ? parsed.greenFlags.filter((f) => typeof f === 'string' && f.trim()).map((f) => f.trim())
+    : [];
+
+  // 6. Validate recommendation
   if (typeof parsed.recommendation !== 'string' || !parsed.recommendation.trim()) {
     throw new Error('AI response must contain a non-empty recommendation string.');
   }
 
-  // 5. Validate limitations
+  // 7. Validate limitations
   if (typeof parsed.limitations !== 'string' || !parsed.limitations.trim()) {
     throw new Error('AI response must contain a non-empty limitations string.');
   }
@@ -92,6 +106,8 @@ export const parseAndValidateGeminiResponse = (rawResponseText) => {
     prediction: rawPrediction,
     riskLevel: rawRiskLevel,
     reasons: validatedReasons,
+    redFlags: validatedRedFlags,
+    greenFlags: validatedGreenFlags,
     recommendation: parsed.recommendation.trim(),
     limitations: parsed.limitations.trim(),
     confidence: null, // Confidence is strictly null as instructed

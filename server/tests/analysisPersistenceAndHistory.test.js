@@ -104,6 +104,7 @@ test('analyzeJob - no persistence when input validation fails', async () => {
     const req = {
       body: {
         jobTitle: 'Engineer',
+        companyName: 'Acme Corp',
         jobDescription: 'Too short', // Below 30 char minimum
       },
     };
@@ -140,6 +141,8 @@ test('analyzeJob - no persistence when Gemini API analysis fails', async () => {
   try {
     const req = {
       body: {
+        jobTitle: 'Backend Developer',
+        companyName: 'Acme Corp',
         jobDescription: 'We are hiring a backend developer to build robust microservices and distributed APIs.',
       },
     };

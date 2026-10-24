@@ -17,6 +17,8 @@ export const sanitizeMongoUri = (uri) => {
  * Connects to MongoDB using Mongoose.
  * Avoids leaking raw credentials in case of failure.
  */
+let retryTimer = null;
+
 export const connectDB = async () => {
   if (!config.mongodbUri) {
     logger.warn('MONGODB_URI is not set. Database persistence will be disabled.');
@@ -31,6 +33,10 @@ export const connectDB = async () => {
     const host = conn.connection.host || 'unknown-host';
     const dbName = conn.connection.name || 'default-db';
     logger.info(`MongoDB Connected successfully: ${host}/${dbName}`);
+    if (retryTimer) {
+      clearInterval(retryTimer);
+      retryTimer = null;
+    }
     return conn;
   } catch (error) {
     const sanitizedUri = sanitizeMongoUri(config.mongodbUri);
@@ -39,6 +45,24 @@ export const connectDB = async () => {
 
     logger.error(`MongoDB connection failed [${sanitizedUri}]:`, safeErrorMessage);
     logger.warn('The application will start, but database operations will return 503 until MongoDB is available.');
+
+    // Auto-retry connection in background every 15 seconds until connected
+    if (!retryTimer) {
+      retryTimer = setInterval(async () => {
+        if (mongoose.connection.readyState === 1) {
+          clearInterval(retryTimer);
+          retryTimer = null;
+          return;
+        }
+        try {
+          await mongoose.connect(config.mongodbUri, { serverSelectionTimeoutMS: 5000 });
+          clearInterval(retryTimer);
+          retryTimer = null;
+          logger.info('MongoDB background auto-reconnect SUCCESS!');
+        } catch {}
+      }, 15000);
+    }
+
     return null;
   }
 };

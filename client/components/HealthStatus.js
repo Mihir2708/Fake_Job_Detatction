@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Activity, CheckCircle2, AlertTriangle, RefreshCw, Server, Database, Key } from 'lucide-react';
+import { Activity, CheckCircle2, AlertTriangle, RefreshCw, Server, Database, Key, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function HealthStatus() {
   const [health, setHealth] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [expanded, setExpanded] = useState(false);
 
   const fetchHealth = async () => {
     setLoading(true);
@@ -31,84 +32,89 @@ export default function HealthStatus() {
     fetchHealth();
   }, []);
 
+  const isHealthy = health && health.status === 'OK' && !error;
+
   return (
-    <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 backdrop-blur-sm shadow-xl">
-      <div className="flex items-center justify-between mb-4 pb-4 border-b border-slate-800">
-        <div className="flex items-center space-x-3">
-          <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-            <Activity className="w-5 h-5" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-white text-base">Backend Health Monitor</h3>
-            <p className="text-xs text-slate-400">Live check on GET /api/health endpoint</p>
-          </div>
+    <div className="rounded-2xl bg-slate-900/40 border border-slate-800/60 backdrop-blur-sm overflow-hidden transition-all w-full">
+      {/* Compact Quick Status Bar */}
+      <div className="flex items-center justify-between px-3 sm:px-4 py-2 sm:py-2.5 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="relative flex h-2.5 w-2.5 flex-shrink-0">
+            {isHealthy && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>}
+            <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isHealthy ? 'bg-emerald-500' : error ? 'bg-rose-500' : 'bg-amber-500'}`}></span>
+          </span>
+          <span className="text-xs font-medium text-slate-300 truncate">
+            {isHealthy ? 'Verification Engine Online' : error ? 'Connecting...' : 'Checking Service...'}
+          </span>
+          <span className="hidden md:inline-block text-slate-600">•</span>
+          <span className="hidden md:inline-block text-[11px] text-slate-400 truncate">
+            AI & Live Search Ready
+          </span>
         </div>
 
-        <button
-          onClick={fetchHealth}
-          disabled={loading}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 transition-colors disabled:opacity-50 border border-slate-700"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-          <span>{loading ? 'Pinging...' : 'Refresh'}</span>
-        </button>
+        <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="flex items-center gap-1 text-[11px] font-medium text-slate-400 hover:text-slate-200 transition-colors px-2 py-1 rounded-lg hover:bg-slate-800/60"
+            aria-label="Toggle system details"
+          >
+            <span>{expanded ? 'Hide' : 'System Info'}</span>
+            {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          </button>
+          <button
+            onClick={fetchHealth}
+            disabled={loading}
+            className="p-1 sm:p-1.5 rounded-lg hover:bg-slate-800/60 text-slate-400 hover:text-white transition-colors disabled:opacity-50"
+            title="Refresh system status"
+            aria-label="Refresh status"
+          >
+            <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin text-emerald-400' : ''}`} />
+          </button>
+        </div>
       </div>
 
-      {loading && !health && (
-        <div className="py-6 text-center text-sm text-slate-400">
-          <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2 text-emerald-400" />
-          Checking server status at /api/health...
-        </div>
-      )}
-
-      {error && !loading && (
-        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex items-start gap-3">
-          <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
-          <div>
-            <p className="font-semibold mb-1">Backend Server Not Responding</p>
-            <p className="text-amber-200/80 mb-2">{error}</p>
-            <p className="text-slate-400">
-              Run <code className="bg-slate-950 px-1.5 py-0.5 rounded text-amber-300">npm run dev</code> inside the <code className="text-white">server</code> directory to launch Express on port 5000.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {health && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center gap-3">
-            <Server className="w-4 h-4 text-emerald-400" />
-            <div>
-              <div className="text-[11px] text-slate-400">Server Status</div>
-              <div className="text-xs font-semibold text-emerald-400 flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3" /> {health.status || 'Active'}
+      {/* Expanded Details View */}
+      {expanded && (
+        <div className="px-3 sm:px-4 pb-3.5 pt-2 border-t border-slate-800/50 bg-slate-950/40 space-y-2.5">
+          {error && (
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs flex items-start gap-2.5">
+              <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+              <div className="min-w-0">
+                <p className="font-semibold">Backend Server Connecting</p>
+                <p className="text-amber-200/80 text-[11px] break-words">{error}</p>
               </div>
             </div>
-          </div>
+          )}
 
-          <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center gap-3">
-            <Database className="w-4 h-4 text-cyan-400" />
-            <div>
-              <div className="text-[11px] text-slate-400">Database</div>
-              <div className="text-xs font-semibold text-slate-200 capitalize">
-                {health.database || 'Connecting'}
+          {health && (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
+              <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/70 flex items-center gap-2.5">
+                <Server className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+                <div className="min-w-0">
+                  <div className="text-[10px] text-slate-400">Server</div>
+                  <div className="text-xs font-semibold text-emerald-400 truncate">{health.status || 'Active'}</div>
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/70 flex items-center gap-2.5">
+                <Database className="w-3.5 h-3.5 text-cyan-400 flex-shrink-0" />
+                <div className="min-w-0">
+                  <div className="text-[10px] text-slate-400">Database</div>
+                  <div className="text-xs font-semibold text-slate-200 capitalize truncate">{health.database || 'Connecting'}</div>
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800/70 flex items-center gap-2.5">
+                <Key className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                <div className="min-w-0">
+                  <div className="text-[10px] text-slate-400">Gemini AI</div>
+                  <div className="text-xs font-semibold text-slate-200 truncate">
+                    {health.geminiConfigured ? <span className="text-emerald-400">Ready</span> : <span className="text-amber-400">Not configured</span>}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center gap-3">
-            <Key className="w-4 h-4 text-amber-400" />
-            <div>
-              <div className="text-[11px] text-slate-400">Gemini AI Key</div>
-              <div className="text-xs font-semibold text-slate-200">
-                {health.geminiConfigured ? (
-                  <span className="text-emerald-400">Configured</span>
-                ) : (
-                  <span className="text-amber-400">Pending .env</span>
-                )}
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       )}
     </div>
