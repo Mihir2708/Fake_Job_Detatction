@@ -1,0 +1,33 @@
+{
+  "name": "fake-job-detection-server",
+  "version": "1.0.0",
+  "description": "Backend REST API for Fake Job Detection powered by Express, MongoDB, and Google Gemini API",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "dev:watch": "node --watch src/server.js",
+    "test": "node --test tests/**/*.test.js"
+  },
+  "keywords": [
+    "fake-job-detection",
+    "express",
+    "gemini-api",
+    "mongodb",
+    "mongoose",
+    "javascript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "mongoose": "^8.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
