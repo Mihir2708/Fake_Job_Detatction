@@ -3,7 +3,7 @@ import { config } from './env.js';
 import { logger } from '../utils/logger.js';
 
 /**
- * Sanitizes a MongoDB connection URI to mask credentials for safe logging.
+ * Sanitizes MongoDB connection URI to mask credentials for safe logging.
  *
  * @param {string} uri
  * @returns {string} Sanitized URI with password replaced
@@ -59,7 +59,7 @@ export const connectDB = async () => {
           clearInterval(retryTimer);
           retryTimer = null;
           logger.info('MongoDB background auto-reconnect SUCCESS!');
-        } catch {}
+        } catch { }
       }, 15000);
     }
 
