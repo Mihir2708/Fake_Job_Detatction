@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Activity, CheckCircle2, AlertTriangle, RefreshCw, Server, Database, Key, ChevronDown, ChevronUp } from 'lucide-react';
+import { getApiUrl } from '../lib/api';
 
 export default function HealthStatus() {
   const [health, setHealth] = useState(null);
@@ -13,7 +14,7 @@ export default function HealthStatus() {
     setLoading(true);
     setError(null);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const apiUrl = getApiUrl();
       const res = await fetch(`${apiUrl}/health`);
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);

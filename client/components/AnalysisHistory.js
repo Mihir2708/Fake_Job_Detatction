@@ -14,6 +14,7 @@ import {
   Info,
   CheckCircle,
 } from 'lucide-react';
+import { getApiUrl } from '../lib/api';
 
 export default function AnalysisHistory({ onSelectAnalysis, refreshTrigger }) {
   const [history, setHistory] = useState([]);
@@ -27,7 +28,7 @@ export default function AnalysisHistory({ onSelectAnalysis, refreshTrigger }) {
     setError(null);
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const apiUrl = getApiUrl();
       const response = await fetch(`${apiUrl}/analysis/history?page=1&limit=10`);
       const json = await response.json();
 

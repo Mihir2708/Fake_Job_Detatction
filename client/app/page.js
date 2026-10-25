@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import HealthStatus from '../components/HealthStatus';
 import AnalysisHistory from '../components/AnalysisHistory';
 import ResultsDashboard from '../components/ResultsDashboard';
+import { getApiUrl } from '../lib/api';
 import {
   ShieldCheck,
   Search,
@@ -133,7 +134,7 @@ export default function HomePage() {
     simulatePipelineSteps();
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const apiUrl = getApiUrl();
       const response = await fetch(`${apiUrl}/analysis/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -167,7 +168,7 @@ export default function HomePage() {
     setDetailLoading(true);
     setError(null);
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const apiUrl = getApiUrl();
       const response = await fetch(`${apiUrl}/analysis/${id}`);
       const json = await response.json();
       if (!response.ok || !json.success) throw new Error(json.message || 'Failed to load record.');
