@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { ShieldAlert, Database, Cpu, Globe } from 'lucide-react';
 

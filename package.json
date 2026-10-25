@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "npm --prefix client run build",
-    "vercel-build": "npm --prefix client install && npm --prefix client run build",
+    "vercel-build": "npm --prefix client run build",
     "server:dev": "npm --prefix server run dev",
     "server:start": "npm --prefix server start",
     "client:dev": "npm --prefix client run dev",
