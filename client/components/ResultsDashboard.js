@@ -169,16 +169,16 @@ export default function ResultsDashboard({ result }) {
   // Verdict style & text
   const verdictConfig = isSafe
     ? {
-        theme: 'emerald',
-        bg: 'from-emerald-950/40 to-slate-900/90 border-emerald-500/30 shadow-emerald-950/20',
-        badgeBg: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400',
-        icon: ShieldCheck,
-        badgeLabel: 'VERIFIED SAFE',
-        title: 'Looks Safe to Apply',
-        subtitle: 'Our multi-layer verification found an authentic company presence with no known scam patterns.',
-      }
+      theme: 'emerald',
+      bg: 'from-emerald-950/40 to-slate-900/90 border-emerald-500/30 shadow-emerald-950/20',
+      badgeBg: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400',
+      icon: ShieldCheck,
+      badgeLabel: 'VERIFIED SAFE',
+      title: 'Looks Safe to Apply',
+      subtitle: 'Our multi-layer verification found an authentic company presence with no known scam patterns.',
+    }
     : isHighRisk
-    ? {
+      ? {
         theme: 'rose',
         bg: 'from-rose-950/40 to-slate-900/90 border-rose-500/30 shadow-rose-950/20',
         badgeBg: 'bg-rose-500/15 border-rose-500/30 text-rose-400',
@@ -187,7 +187,7 @@ export default function ResultsDashboard({ result }) {
         title: 'High Risk Scam Alert',
         subtitle: 'Warning: Serious fraudulent indicators or advance-fee patterns were detected in this posting.',
       }
-    : {
+      : {
         theme: 'amber',
         bg: 'from-amber-950/40 to-slate-900/90 border-amber-500/30 shadow-amber-950/20',
         badgeBg: 'bg-amber-500/15 border-amber-500/30 text-amber-400',
@@ -243,16 +243,14 @@ export default function ResultsDashboard({ result }) {
           <div className="w-full sm:w-auto flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-start bg-slate-950/70 border border-slate-800/80 px-4 py-3 sm:px-5 sm:py-3.5 rounded-xl sm:rounded-2xl flex-shrink-0">
             <div className="text-left sm:text-right">
               <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Scam Risk</span>
-              <span className={`text-[10px] font-semibold capitalize ${
-                isSafe ? 'text-emerald-400' : isHighRisk ? 'text-rose-400' : 'text-amber-400'
-              }`}>
+              <span className={`text-[10px] font-semibold capitalize ${isSafe ? 'text-emerald-400' : isHighRisk ? 'text-rose-400' : 'text-amber-400'
+                }`}>
                 {isSafe ? 'Low Risk (Safe)' : isHighRisk ? 'High Risk (Danger)' : 'Moderate (Caution)'}
               </span>
             </div>
             <div className="flex items-baseline gap-1 mt-0 sm:mt-0.5">
-              <span className={`text-2xl sm:text-3xl font-black ${
-                isSafe ? 'text-emerald-400' : isHighRisk ? 'text-rose-400' : 'text-amber-400'
-              }`}>
+              <span className={`text-2xl sm:text-3xl font-black ${isSafe ? 'text-emerald-400' : isHighRisk ? 'text-rose-400' : 'text-amber-400'
+                }`}>
                 {score}
               </span>
               <span className="text-xs font-semibold text-slate-400">/ 100 Risk</span>
@@ -282,13 +280,12 @@ export default function ResultsDashboard({ result }) {
 
             {/* Needle indicator */}
             <div
-              className={`absolute top-0 bottom-0 w-2.5 sm:w-3 rounded-full border-2 border-slate-950 -translate-x-1 sm:-translate-x-1.5 transition-all duration-700 shadow-md ${
-                isSafe
-                  ? 'bg-emerald-400 shadow-emerald-400/80'
-                  : isHighRisk
+              className={`absolute top-0 bottom-0 w-2.5 sm:w-3 rounded-full border-2 border-slate-950 -translate-x-1 sm:-translate-x-1.5 transition-all duration-700 shadow-md ${isSafe
+                ? 'bg-emerald-400 shadow-emerald-400/80'
+                : isHighRisk
                   ? 'bg-rose-500 shadow-rose-500/80'
                   : 'bg-amber-400 shadow-amber-400/80'
-              }`}
+                }`}
               style={{ left: `${score}%` }}
             />
           </div>
@@ -333,8 +330,8 @@ export default function ResultsDashboard({ result }) {
                 {companyDomain
                   ? `Active official domain (${companyDomain}) verified online.`
                   : isCompanyVerified
-                  ? 'Genuine online footprint confirmed.'
-                  : 'Company has minimal or no verifiable official domain records.'}
+                    ? 'Genuine online footprint confirmed.'
+                    : 'Company has minimal or no verifiable official domain records.'}
               </p>
             </div>
             {companyDomain && (
@@ -425,16 +422,14 @@ export default function ResultsDashboard({ result }) {
       </div>
 
       {/* ── 4. WHAT SHOULD YOU DO NEXT? ─────────────────────────────────── */}
-      <div className={`p-4 sm:p-6 rounded-2xl border ${
-        isSafe
-          ? 'bg-emerald-500/5 border-emerald-500/20'
-          : isHighRisk
+      <div className={`p-4 sm:p-6 rounded-2xl border ${isSafe
+        ? 'bg-emerald-500/5 border-emerald-500/20'
+        : isHighRisk
           ? 'bg-rose-500/10 border-rose-500/30'
           : 'bg-amber-500/5 border-amber-500/20'
-      }`}>
-        <h4 className={`text-sm font-bold mb-3 flex items-center gap-2 ${
-          isSafe ? 'text-emerald-400' : isHighRisk ? 'text-rose-400' : 'text-amber-400'
         }`}>
+        <h4 className={`text-sm font-bold mb-3 flex items-center gap-2 ${isSafe ? 'text-emerald-400' : isHighRisk ? 'text-rose-400' : 'text-amber-400'
+          }`}>
           <ArrowRight className="w-4 h-4 flex-shrink-0" />
           <span>Recommended Next Steps for You</span>
         </h4>
