@@ -2,10 +2,6 @@
   "name": "fake-job-detection",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "client",
-    "server"
-  ],
   "description": "Full-stack Fake Job Detection application using Next.js, Express.js, MongoDB, and Google Gemini API",
   "type": "module",
   "scripts": {
@@ -16,7 +12,7 @@
     "client:dev": "npm --prefix client run dev",
     "client:build": "npm --prefix client run build",
     "client:start": "npm --prefix client start",
-    "install:all": "npm install",
+    "install:all": "npm install && npm --prefix client install && npm --prefix server install",
     "test:server": "npm --prefix server test"
   },
   "dependencies": {
@@ -25,9 +21,6 @@
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "mongoose": "^8.7.2"
-  },
-  "devDependencies": {
-    "next": "^14.2.15"
   },
   "keywords": [
     "fake-job-detection",
