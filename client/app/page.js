@@ -141,6 +141,13 @@ export default function HomePage() {
         body: JSON.stringify(formData),
       });
 
+      const contentType = response.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error(
+          `API returned HTTP ${response.status} (${response.statusText}). If on Vercel, ensure GEMINI_API_KEY and MONGODB_URI are configured in Vercel Environment Variables.`
+        );
+      }
+
       const json = await response.json();
 
       if (!response.ok || !json.success) {
@@ -170,6 +177,10 @@ export default function HomePage() {
     try {
       const apiUrl = getApiUrl();
       const response = await fetch(`${apiUrl}/analysis/${id}`);
+      const contentType = response.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error(`API returned HTTP ${response.status}`);
+      }
       const json = await response.json();
       if (!response.ok || !json.success) throw new Error(json.message || 'Failed to load record.');
       setResult(json.data);
