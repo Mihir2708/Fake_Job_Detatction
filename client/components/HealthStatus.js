@@ -33,7 +33,7 @@ export default function HealthStatus() {
     fetchHealth();
   }, []);
 
-  const isHealthy = health && health.status === 'OK' && !error;
+  const isHealthy = health && (health.status === 'healthy' || health.status === 'OK' || health.status === 'online') && !error;
 
   return (
     <div className="rounded-2xl bg-slate-900/40 border border-slate-800/60 backdrop-blur-sm overflow-hidden transition-all w-full">
