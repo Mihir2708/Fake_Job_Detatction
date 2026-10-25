@@ -5,6 +5,19 @@ import searchRoutes from './searchRoutes.js';
 
 const router = Router();
 
+// Base route for /api
+router.get('/', (req, res) => {
+  res.json({
+    status: 'online',
+    message: 'Fake Job Detection API service',
+    endpoints: {
+      health: '/api/health',
+      analyze: '/api/analysis/analyze',
+      history: '/api/analysis/history',
+    },
+  });
+});
+
 // Mount sub-routes
 router.use('/health', healthRoutes);
 router.use('/analysis', analysisRoutes);

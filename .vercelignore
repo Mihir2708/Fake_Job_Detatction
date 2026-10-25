@@ -1,0 +1,6 @@
+# Exclude heavy backend node_modules and tests from Vercel deployment bundle
+server/node_modules
+server/tests
+.git
+*.log
+.env.local
