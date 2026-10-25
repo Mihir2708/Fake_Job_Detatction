@@ -22,6 +22,11 @@
     "express": "^4.21.1",
     "mongoose": "^8.7.2"
   },
+  "devDependencies": {
+    "next": "^14.2.15",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
   "keywords": [
     "fake-job-detection",
     "express",
