@@ -3,9 +3,9 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   async rewrites() {
-    // When BACKEND_URL or NEXT_PUBLIC_BACKEND_URL is set in Vercel environment variables,
-    // Next.js automatically proxies /api/* requests to the deployed backend server.
-    const backendUrl = process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
+    // When SERVER_URL (injected by Vercel service binding) or BACKEND_URL is set,
+    // Next.js proxies /api/* requests to the server service.
+    const backendUrl = process.env.SERVER_URL || process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL;
     if (backendUrl) {
       return [
         {

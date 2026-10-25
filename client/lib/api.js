@@ -1,18 +1,29 @@
 /**
- * Unified API URL Resolver for Client Components
+ * Unified API URL Resolver
  *
- * Priority:
- * 1. NEXT_PUBLIC_API_URL environment variable (configured in Vercel project settings or .env)
- * 2. In production without NEXT_PUBLIC_API_URL, fallback to '/api' (proxied by Next.js rewrites)
- * 3. In local development, fallback to 'http://localhost:5000/api'
+ * In Vercel Services mode:
+ * 1. Server-side runtime (Next.js SSR / Server Actions / Route Handlers):
+ *    Uses process.env.SERVER_URL injected by Vercel's service binding.
+ * 2. Client-side browser:
+ *    Uses '/api' (routed directly to the server service by Vercel top-level rewrites).
+ * 3. Explicit override:
+ *    Uses NEXT_PUBLIC_API_URL if defined.
+ * 4. Local standalone development:
+ *    Falls back to 'http://localhost:5000/api'.
  */
 export function getApiUrl() {
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, '');
   }
 
-  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
+  // Client-side browser execution (routed via Vercel rewrites: /api/* -> server)
+  if (typeof window !== 'undefined') {
     return '/api';
+  }
+
+  // Server-side runtime in Next.js (bound to server service by Vercel)
+  if (process.env.SERVER_URL) {
+    return `${process.env.SERVER_URL.replace(/\/$/, '')}/api`;
   }
 
   return 'http://localhost:5000/api';
